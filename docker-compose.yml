@@ -1,0 +1,59 @@
+version: '3.3'
+
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    ports:
+      - "8000:80"
+    restart: always
+    volumes:
+      - type: bind
+        source: ./uploads
+        target: /var/www/html/wp-content/uploads
+      - type: bind
+        source: ./php/phpinfo.php
+        target: /var/www/html/phpinfo.php
+      - type: bind
+        source: ./php/uploads.ini
+        target: /usr/local/etc/php/conf.d/uploads.ini
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wp_
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - type: bind
+        source: ./php/phpinfo.php
+        target: /var/www/html/phpinfo.php
+      - type: bind
+        source: ./php/uploads.ini
+        target: /usr/local/etc/php/conf.d/uploads.ini
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: wordpress
+      PMA_PASSWORD: wordpress
+
+volumes:
+  db_data: {}
