@@ -73,7 +73,7 @@ build-iPhoneSimulator/
 #
 
 # General
-.DS_Store
+#.DS_Store
 .AppleDouble
 .LSOverride
 
@@ -106,4 +106,4 @@ Temporary Items
 #
 
 # Ignore uploaded files
-/uploads/**
+#/uploads/**
