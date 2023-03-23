@@ -389,6 +389,8 @@ WordPress にアップロードできるファイルサイズの上限値を設�
 
 ### **macOS Ventura バージョン 13.2.1**    
 
+2023/03/23(Thu) 19:54:55  
+
 ・docker desktop  
 docker desktop Version 4.17.0 (99724)  
 Engine: 20.10.23  
@@ -403,8 +405,8 @@ zsh 5.8.1 (x86_64-apple-darwin22.0)
 
 ・Ruby  
 macOS Ventura バージョン 13.2.1 
-ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin22] 
-ruby 3.2.0 (2022-12-25 revision a528908271) [arm64-darwin22]
+ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin22]  
+ruby 3.2.0 (2022-12-25 revision a528908271) [arm64-darwin22]  
 
 ---
 
