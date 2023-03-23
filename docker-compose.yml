@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   db:
-    image: mysql:5.7
+    image: mysql:latest
     volumes:
       - db_data:/var/lib/mysql
     restart: always
@@ -54,6 +54,23 @@ services:
       PMA_PORT: 3306
       PMA_USER: wordpress
       PMA_PASSWORD: wordpress
+
+  cli:
+    image: wordpress:cli
+    container_name: cli
+    volumes_from: 
+      - wordpress
+    depends_on:
+      - db
+      - wordpress
+    command: "--info"
+    user: xfs
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wp_
 
 volumes:
   db_data: {}

@@ -1,6 +1,6 @@
 # docker-compose-wordpress
 
-Docker Compose を使って WordPress、MySQL、phpMyAdmin のローカル環境の構築
+Docker Compose を使って WordPress、MySQL、phpMyAdmi、WP-CLI のローカル環境の構築
 
 ---
 
@@ -11,12 +11,12 @@ Docker Compose を使って WordPress、MySQL、phpMyAdmin のローカル環境
   - [Docker Compose のインストール](#docker-compose-のインストール)
   - [使い方](#使い方)
   - [お手軽 Docker コマンド起動 Ruby スクリプト docker.rb](#お手軽-docker-コマンド起動-ruby-スクリプト-dockerrb)
+  - [お手軽 Docker コマンド起動 Ruby スクリプト docker.rb の WP-CLI コマンド](#お手軽-docker-コマンド起動-ruby-スクリプト-dockerrb-の-wp-cli-コマンド)
   - [docker-compose-wordpress ディレクトリ内のファイルとディレクトリの説明](#docker-compose-wordpress-ディレクトリ内のファイルとディレクトリの説明)
   - [他の WordPress サイトを Docker 側の WordPress にコピーする方法](#他の-wordpress-サイトを-docker-側の-wordpress-にコピーする方法)
   - [Docker Hub Container Image](#docker-hub-container-image)
   - [動作環境](#動作環境)
-    - [**macOS Big Sur バージョン 11.5.2**](#macos-big-sur-バージョン-1152)
-    - [**macOS Monterey バージョン 12.1 (21C52)**](#macos-monterey-バージョン-121-21c52)
+    - [**macOS Ventura バージョン 13.2.1**](#macos-ventura-バージョン-1321)
   - [ライセンス](#ライセンス)
 
 ---
@@ -94,28 +94,213 @@ docker-compose
    10: stop                                      :Stop services
    11: down                                      :Stop and remove containers, networks, images, and volumes
    12: ps --all                                  :List containers
+docker-compose run --rm cli
+   13: db search 'Hello world'                   :wp db search 'Hello world'
+   14: --help                                    :wp --help : 'q' to quit
+docker-compose run --rm cli
+   15: <COMMAND>                                 :wp <COMMAND>
 open
-   13: http://localhost:8000                     :WordPress
-   14: http://localhost:8000/wp-admin/           :WordPress admin
-   15: http://localhost:8000/phpinfo.php         :WordPress: phpinfo.php
-   16: http://localhost:8080                     :phpMyAdmin
-   17: http://localhost:8080/phpinfo.php         :phpMyAdmin: phpinfo.php
-   18: .                                         :Finder
+   16: http://localhost:8000                     :WordPress
+   17: http://localhost:8000/wp-admin/           :WordPress admin
+   18: http://localhost:8000/phpinfo.php         :WordPress: phpinfo.php
+   19: http://localhost:8080                     :phpMyAdmin
+   20: http://localhost:8080/phpinfo.php         :phpMyAdmin: phpinfo.php
+   21: .                                         :Finder
 code
-   19: .                                         :Visual Studio Code
+   22: .                                         :Visual Studio Code
 ?
 ```
 
 実行できるコマンドと引数一覧が表示されます。  
-実行したいコマンドと引数の左横の番号を ? 文字の後に入力して Return キーを押すとコマンドを実行できます。  
+実行したいコマンドと引数の左横の番号を ? 文字の次の行に入力して Return キーを押すとコマンドを実行できます。  
 
 ```
-?7 
+?
+7 
 ```
 
 例えば、7 を入力すれば、docker-compose up -d  コマンドが実行されます。  
 
-WordPress のサイトをブラウザで開くには、13 を選択します。macOS では、open コマンドを使って、デフォルトブラウザで http://localhost:8000 を開きます。  
+WordPress のサイトをブラウザで開くには、16 を選択します。macOS では、open コマンドを使って、デフォルトブラウザで http://localhost:8000 を開きます。  
+
+
+## お手軽 Docker コマンド起動 Ruby スクリプト docker.rb の WP-CLI コマンド  
+
+```
+❯ ./docker.rb
+docker
+︙
+docker-compose
+    7: up -d                                     :Create and start containers
+    8: restart                                   :Restart services
+    9: start                                     :Start services
+   10: stop                                      :Stop services
+   11: down                                      :Stop and remove containers, networks, images, and volumes
+   12: ps --all                                  :List containers
+docker-compose run --rm cli
+   13: db search 'Hello world'                   :wp db search 'Hello world'
+   14: --help                                    :wp --help : 'q' to quit
+docker-compose run --rm cli
+   15: <COMMAND>                                 :wp <COMMAND>
+open
+︙
+code
+   22: .                                         :Visual Studio Code
+?
+```
+
+13、14、15 の番号は、WP-CLI コンテナを削除し、再作成した後に起動します。
+
+2023/03/21(Tue) 19:21:00  
+[wordpress/Dockerfile at 809519cc86bee0d6c7f2743976a850267983e2c2 · docker-library/wordpress](https://github.com/docker-library/wordpress/blob/809519cc86bee0d6c7f2743976a850267983e2c2/cli/php8.2/alpine/Dockerfile)  
+[https://github.com/docker-library/wordpress/blob/809519cc86bee0d6c7f2743976a850267983e2c2/cli/php8.2/alpine/Dockerfile](https://github.com/docker-library/wordpress/blob/809519cc86bee0d6c7f2743976a850267983e2c2/cli/php8.2/alpine/Dockerfile)  
+
+```
+ENTRYPOINT ["docker-entrypoint.sh"]
+USER www-data
+CMD ["wp", "shell"]
+```
+
+WP-CLI コンテナは、実行されると上記 Dockerfile の CMD ["wp", "shell"] より、wp コマンドをシェルモードで起動します。
+
+CMD 命令の詳細は、下記ページを参考にしてください。  
+
+2023/03/23(Thr) 18:46:44  
+[Dockerfile reference](https://docs.docker.com/engine/reference/builder/)  
+[https://docs.docker.com/engine/reference/builder/](https://docs.docker.com/engine/reference/builder/)  
+
+[CMD🔗](https://docs.docker.com/engine/reference/builder/#cmd)  
+
+The CMD instruction has three forms:  
+
+・CMD ["executable","param1","param2"] (exec form, this is the preferred form)  
+・CMD ["param1","param2"] (as default parameters to ENTRYPOINT)  
+・CMD command param1 param2 (shell form)  
+There can only be one CMD instruction in a Dockerfile. If you list more than one CMD then only the last CMD will take effect.  
+
+The main purpose of a CMD is to provide defaults for an executing container. These defaults can include an executable, or they can omit the executable, in which case you must specify an ENTRYPOINT instruction as well.  
+
+If CMD is used to provide default arguments for the ENTRYPOINT instruction, both the CMD and ENTRYPOINT instructions should be specified with the JSON array format.  
+
+```
+❯ ./docker.rb
+docker
+︙
+docker-compose run --rm cli
+   13: db search 'Hello world'                   :wp db search 'Hello world'
+   14: --help                                    :wp --help : 'q' to quit
+docker-compose run --rm cli
+   15: <COMMAND>                                 :wp <COMMAND>
+open
+︙
+code
+   22: .                                         :Visual Studio Code
+?
+```
+
+13番を選択するとコマンド docker-compose run --rm cli db search 'Hello world' を実行します。
+コマンドの引数、db search 'Hello world' がシェルモードの wp に下記のように渡され実行されます。
+
+```
+?
+13 
+❯ docker-compose run --rm cli db search 'Hello world'
+
+[+] Running 2/0
+ ⠿ Container docker-compose-wordpress-db-1         Running                                                                                                                     0.0s
+ ⠿ Container docker-compose-wordpress-wordpress-1  Running                                                                                                                     0.0s
+wp_posts:post_title
+1:Hello world!
+```
+
+上記結果より、データベースのテーブル wp_posts、カラム post_title に 'Hello world' の文字列が１箇所見つかりました。  
+
+```
+?
+15
+wp <COMMAND>
+ex. 
+  COMMAND:
+    --info 
+    --help 
+    db search 'WordPress'
+    search-replace 'https://example.com' 'https://example.net' --skip-columns=guid
+    search-replace 'https://example.com' https://example.net' 
+    search-replace 'Hello world' 'Welcome WordPress' 
+
+COMMAND ?
+search-replace 'Hello world' 'Welcome WordPress' 
+❯ docker-compose run --rm cli search-replace 'Hello world' 'Welcome WordPress' 
+
+
+[+] Running 2/0
+ ⠿ Container docker-compose-wordpress-db-1         Running                                                                                                                     0.0s
+ ⠿ Container docker-compose-wordpress-wordpress-1  Running                                                                                                                     0.0s
++------------------+-----------------------+--------------+------+
+| Table            | Column                | Replacements | Type |
++------------------+-----------------------+--------------+------+
+| wp_commentmeta   | meta_key              | 0            | SQL  |
+| wp_commentmeta   | meta_value            | 0            | SQL  |
+| wp_comments      | comment_author        | 0            | SQL  |
+| wp_comments      | comment_author_email  | 0            | SQL  |
+| wp_comments      | comment_author_url    | 0            | SQL  |
+| wp_comments      | comment_author_IP     | 0            | SQL  |
+| wp_comments      | comment_content       | 0            | SQL  |
+| wp_comments      | comment_approved      | 0            | SQL  |
+| wp_comments      | comment_agent         | 0            | SQL  |
+| wp_comments      | comment_type          | 0            | SQL  |
+| wp_links         | link_url              | 0            | SQL  |
+| wp_links         | link_name             | 0            | SQL  |
+| wp_links         | link_image            | 0            | SQL  |
+| wp_links         | link_target           | 0            | SQL  |
+| wp_links         | link_description      | 0            | SQL  |
+| wp_links         | link_visible          | 0            | SQL  |
+| wp_links         | link_rel              | 0            | SQL  |
+| wp_links         | link_notes            | 0            | SQL  |
+| wp_links         | link_rss              | 0            | SQL  |
+| wp_options       | option_name           | 0            | SQL  |
+| wp_options       | option_value          | 0            | PHP  |
+| wp_options       | autoload              | 0            | SQL  |
+| wp_postmeta      | meta_key              | 0            | SQL  |
+| wp_postmeta      | meta_value            | 0            | SQL  |
+| wp_posts         | post_content          | 0            | SQL  |
+| wp_posts         | post_title            | 1            | SQL  |
+| wp_posts         | post_excerpt          | 0            | SQL  |
+| wp_posts         | post_status           | 0            | SQL  |
+| wp_posts         | comment_status        | 0            | SQL  |
+| wp_posts         | ping_status           | 0            | SQL  |
+| wp_posts         | post_password         | 0            | SQL  |
+| wp_posts         | post_name             | 0            | SQL  |
+| wp_posts         | to_ping               | 0            | SQL  |
+| wp_posts         | pinged                | 0            | SQL  |
+| wp_posts         | post_content_filtered | 0            | SQL  |
+| wp_posts         | guid                  | 0            | SQL  |
+| wp_posts         | post_type             | 0            | SQL  |
+| wp_posts         | post_mime_type        | 0            | SQL  |
+| wp_term_taxonomy | taxonomy              | 0            | SQL  |
+| wp_term_taxonomy | description           | 0            | SQL  |
+| wp_termmeta      | meta_key              | 0            | SQL  |
+| wp_termmeta      | meta_value            | 0            | SQL  |
+| wp_terms         | name                  | 0            | SQL  |
+| wp_terms         | slug                  | 0            | SQL  |
+| wp_usermeta      | meta_key              | 0            | SQL  |
+| wp_usermeta      | meta_value            | 0            | PHP  |
+| wp_users         | user_login            | 0            | SQL  |
+| wp_users         | user_nicename         | 0            | SQL  |
+| wp_users         | user_email            | 0            | SQL  |
+| wp_users         | user_url              | 0            | SQL  |
+| wp_users         | user_activation_key   | 0            | SQL  |
+| wp_users         | display_name          | 0            | SQL  |
++------------------+-----------------------+--------------+------+
+Success: Made 1 replacement.
+```
+
+上記のように 15番を選択した場合、COMMAND ? の次の行に wp コマンドに渡す引数を入力して、実行することができます。  
+
+コマンドの例、--info、db search 'WordPress'　などが表示されるので参考にしてください。  
+上記例では、COMMAND ?の次の行に、文字列 "search-replace 'Hello world' 'Welcome WordPress'" を入力して、Return キーを押して実行しています。  
+
+上記結果より、データベースのテーブル wp_posts、カラム post_title の 'Hello world' の文字列が１箇所 'Welcome WordPress' に変更されています。  
 
 ---
 
@@ -202,49 +387,24 @@ WordPress にアップロードできるファイルサイズの上限値を設�
 
 ## 動作環境  
 
-### **macOS Big Sur バージョン 11.5.2**    
+### **macOS Ventura バージョン 13.2.1**    
 
 ・docker desktop  
-docker desktop Version 3.5.2 (66501)  
-Engine: 20.10.7  
-Compose: 1..29.2  
-Credential Helper: 0.6.4  
-kubernetes: v1.21.2  
-Snyk: v1.563.0  
+docker desktop Version 4.17.0 (99724)  
+Engine: 20.10.23  
+Compose: v2.15.1  
+Credential Helper: v0.7.4  
+kubernetes: v1.25.4  
 
-・iMac (Retina 5K, 27-inch, 2019)   
-macOS Big Sur バージョン 11.5.2  
-GNU bash, version 3.2.57(1)-release (x86_64-apple-darwin20)  
-zsh 5.8 (x86_64-apple-darwin20.0)  
-
-・Ruby  
-macOS Big Sur バージョン 11.5.2  
-ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin20]  
-ruby 3.0.1p64 (2021-04-05 revision 0fb782ee38) [x86_64-darwin20]  
-
-
-### **macOS Monterey バージョン 12.1 (21C52)**  
-2022/01/02(Sun) 00:19:43  
-
-・docker desktop  
-docker desktop Version 4.3.2 (72729)  
-Engine: 20.10.11  
-Compose: 1..29.2  
-Credential Helper: 0.6.4  
-kubernetes: v1.22.4  
-Snyk: v1.801.0  
-
-・iMac (Retina 5K, 27-inch, 2019)   
-GNU bash, version 3.2.57(1)-release (x86_64-apple-darwin21)  
-zsh 5.8 (x86_64-apple-darwin21.0)  
+・Mac mini (2023)     
+macOS Ventura バージョン 13.2.1  
+GNU bash, version 3.2.57(1)-release (arm64-apple-darwin22) 
+zsh 5.8.1 (x86_64-apple-darwin22.0)
 
 ・Ruby  
-ruby 2.6.8p205 (2021-07-07 revision 67951) [universal.x86_64-darwin21]  
-ruby 3.1.0p0 (2021-12-25 revision fb4df44d16) [x86_64-darwin21]  
-
-2022/01/02(Sun) 00:12:58  
-[Apache Log4j 2 CVE-2021-44228 - Docker Blog](https://www.docker.com/blog/apache-log4j-2-cve-2021-44228/)  
-[https://www.docker.com/blog/apache-log4j-2-cve-2021-44228/](https://www.docker.com/blog/apache-log4j-2-cve-2021-44228/)  
+macOS Ventura バージョン 13.2.1 
+ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin22] 
+ruby 3.2.0 (2022-12-25 revision a528908271) [arm64-darwin22]
 
 ---
 
